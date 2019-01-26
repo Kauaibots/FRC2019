@@ -78,7 +78,8 @@ swerve.setDriveMode(mode);
 
   private Wheel[] getWheels() {
     TalonSRXConfiguration azimuthConfig = new TalonSRXConfiguration();
-    azimuthConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
+    azimuthConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Absolute;//CTRE_MagEncoder_Relative;
+    azimuthConfig.auxiliaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Absolute;//CTRE_MagEncoder_Relative;
     azimuthConfig.continuousCurrentLimit = 10;
     azimuthConfig.peakCurrentDuration = 0;
     azimuthConfig.peakCurrentLimit = 0;
@@ -90,6 +91,7 @@ swerve.setDriveMode(mode);
     azimuthConfig.slot0.allowableClosedloopError = 0;
     azimuthConfig.motionAcceleration = 10_000;
     azimuthConfig.motionCruiseVelocity = 800;
+    azimuthConfig.pulseWidthPeriod_FilterWindowSz = 5;
 
     TalonSRXConfiguration driveConfig = new TalonSRXConfiguration();
     driveConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.CTRE_MagEncoder_Relative;
@@ -105,6 +107,8 @@ swerve.setDriveMode(mode);
     for (int i = 0; i < 4; i++) {
       TalonSRX azimuthTalon = new TalonSRX(i);
       azimuthTalon.configAllSettings(azimuthConfig);
+      azimuthTalon.setInverted(true);
+      azimuthTalon.setSensorPhase(true);
 
       TalonSRX driveTalon = new TalonSRX(i + 10);
       driveTalon.configAllSettings(driveConfig);

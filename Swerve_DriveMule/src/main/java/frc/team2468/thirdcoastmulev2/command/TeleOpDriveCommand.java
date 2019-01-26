@@ -38,7 +38,12 @@ private final Logger logger = LoggerFactory.getLogger(this.getClass());
     SmartDashboard.putNumber("Azimuth I", 0);
     SmartDashboard.putNumber("Azimuth D", 0);
     SmartDashboard.putNumber("Azimuth F", 0);
-    //SmartDashboard.putNumber("Azimuth #", 0);
+    SmartDashboard.putBoolean("Calibrate Azimuth?", false);
+    SmartDashboard.putNumber("Azimuth #", 0);
+    SmartDashboard.putNumber("Forward Val", 0);
+    SmartDashboard.putNumber("Strafe Val", 0);
+    SmartDashboard.putNumber("Azimuth Val", 0);
+    SmartDashboard.putBoolean("Manual Drive", false);
 
   }
 
@@ -48,19 +53,36 @@ private final Logger logger = LoggerFactory.getLogger(this.getClass());
     double strafe = deadband(controls.getStrafe());
     double azimuth = deadband(controls.getYaw());
 
-    swerve.drive(forward, strafe, azimuth);
+    if (SmartDashboard.getBoolean("Manual Drive", false)) {    
+    forward = SmartDashboard.getNumber("Forward Val", 0);//deadband(controls.getForward());
+    strafe = SmartDashboard.getNumber("Strafe Val", 0);//deadband(controls.getStrafe());
+    azimuth = SmartDashboard.getNumber("Azimuth Val", 0);//deadband(controls.getYaw());
+    }
 
+    if (!SmartDashboard.getBoolean("Calibrate Azimuth?", false)){
+      swerve.drive(forward, strafe, azimuth);
+    }
     //for fine positioning the azimuths
-    //swerve.azimuthTalons[(int) SmartDashboard.getNumber("Azimuth #", 0)].set(ControlMode.PercentOutput, controls.joystick.getRawAxis(3)/2-.25);
-    
+    if (SmartDashboard.getBoolean("Calibrate Azimuth?", false)){
+      swerve.azimuthTalons[(int) SmartDashboard.getNumber("Azimuth #", 0)].set(ControlMode.PercentOutput, controls.joystick.getRawAxis(3)/2-.25);
+    }
+
     if(controls.joystick.getRawButton(8)){
       swerve.calibrateAzimuth();
     }
 
-    updatePID();
+    if (controls.joystick.getRawButton(5)){
+      swerve.zeroGyro();
+    }
 
-    SmartDashboard.putString("Azimuth Control", swerve.azimuthTalons[1].getControlMode().toString());
-    SmartDashboard.putNumber("Azimuth ", swerve.azimuthTalons[1].getClosedLoopTarget());
+    //updatePID();
+
+    SmartDashboard.putString("Azimuth Control", swerve.azimuthTalons[(int) SmartDashboard.getNumber("Azimuth #", 0)].getControlMode().toString());
+    SmartDashboard.putNumber("Azimuth Target", swerve.azimuthTalons[(int) SmartDashboard.getNumber("Azimuth #", 0)].getClosedLoopTarget());
+    SmartDashboard.putNumber("Azimuth Sensor Rise Fall us", swerve.azimuthTalons[(int) SmartDashboard.getNumber("Azimuth #", 0)].getSensorCollection().getPulseWidthRiseToFallUs());
+    SmartDashboard.putNumber("Azimuth Sensor Rise Rise us", swerve.azimuthTalons[(int) SmartDashboard.getNumber("Azimuth #", 0)].getSensorCollection().getPulseWidthRiseToRiseUs());
+    SmartDashboard.putNumber("Azimuth PWM Sensor Position", swerve.azimuthTalons[(int) SmartDashboard.getNumber("Azimuth #", 0)].getSensorCollection().getPulseWidthPosition() & 0xFFF);
+    SmartDashboard.putNumber("Azimuth Selected Sensor Position", swerve.azimuthTalons[(int) SmartDashboard.getNumber("Azimuth #", 0)].getSelectedSensorPosition(0));
   }
 
   public void updatePID(){

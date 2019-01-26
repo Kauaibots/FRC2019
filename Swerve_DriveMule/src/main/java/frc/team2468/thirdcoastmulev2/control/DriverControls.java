@@ -58,7 +58,7 @@ private final Logger logger = LoggerFactory.getLogger(this.getClass());
 //    return joystick.getRawAxis(Axis.LEFT_Y.id);
   }
 
-  /** Right stick Y (left-right) axis. */
+  /** Right stick Rotation axis. */
   public double getYaw() {
     return joystick.getRawAxis(4);
 //    return joystick.getRawAxis(Axis.RIGHT_Y.id);
