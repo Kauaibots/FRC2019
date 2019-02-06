@@ -3,12 +3,12 @@ package frc.team2468.thirdcoastmulev2.control;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team2468.thirdcoastmulev2.command.DriveDistance;
 import frc.team2468.thirdcoastmulev2.command.LogCommand;
+import frc.team2468.thirdcoastmulev2.command.ZeroGyroCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import frc.team2468.thirdcoastmulev2.command.ZeroGyroCommand;
-
 
 /** This assumes the use of an Interlink X Flight Simulator controller. */
 @SuppressWarnings("unused")
@@ -16,8 +16,7 @@ public class DriverControls {
 
   public Joystick joystick;
 
-private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   DriverControls(int port) {
     joystick = new Joystick(port);
@@ -29,7 +28,7 @@ private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     // Push-buttons
     new JoystickButton(joystick, Button.RESET.id).whenPressed(new ZeroGyroCommand());
-    
+
     new JoystickButton(joystick, Button.HAMBURGER.id).whenPressed(log(Button.HAMBURGER));
     new JoystickButton(joystick, Button.X.id).whenPressed(log(Button.X));
     new JoystickButton(joystick, Button.UP.id).whenPressed(log(Button.UP));
@@ -44,45 +43,49 @@ private final Logger logger = LoggerFactory.getLogger(this.getClass());
     new JoystickButton(joystick, Trim.RIGHT_X_NEG.id).whenPressed(log(Trim.RIGHT_X_NEG));
     new JoystickButton(joystick, Trim.RIGHT_Y_POS.id).whenPressed(log(Trim.RIGHT_Y_POS));
     new JoystickButton(joystick, Trim.RIGHT_Y_NEG.id).whenPressed(log(Trim.RIGHT_Y_NEG));
+
+    JoystickButton DriveDistanceActivation = new JoystickButton(joystick, 6);
+
+    DriveDistanceActivation.whenPressed(
+        new DriveDistance(
+            SmartDashboard.getNumber("Drive Distance", 0),
+            SmartDashboard.getNumber("Drive Angle", 0)));
   }
 
   /** Left stick Y (up-down) axis. */
   public double getForward() {
     return -joystick.getY();
-//    return -joystick.getRawAxis(Axis.LEFT_X.id);
+    //    return -joystick.getRawAxis(Axis.LEFT_X.id);
   }
 
   /** Left stick X (left-right) axis. */
   public double getStrafe() {
     return joystick.getX();
-//    return joystick.getRawAxis(Axis.LEFT_Y.id);
+    //    return joystick.getRawAxis(Axis.LEFT_Y.id);
   }
 
   /** Right stick Rotation axis. */
   public double getYaw() {
     return joystick.getRawAxis(4);
-//    return joystick.getRawAxis(Axis.RIGHT_Y.id);
+    //    return joystick.getRawAxis(Axis.RIGHT_Y.id);
   }
 
   /** Tuner knob. */
   public double getTuner() {
     return joystick.getRawAxis(2);
-//    return joystick.getRawAxis(Axis.TUNER.id);
+    //    return joystick.getRawAxis(Axis.TUNER.id);
   }
 
-  /** Left slider on back of controller. *
-  public double getLeftBackAxis() {
-    return joystick.getRawAxis(Axis.LEFT_BACK.id);
-  }
-
-  /** Right slider on back of controller. *
-  public double getRightBackAxis() {
-    return joystick.getRawAxis(Axis.RIGHT_BACK.id);
-  }*/
-
+  /**
+   * Left slider on back of controller. * public double getLeftBackAxis() { return
+   * joystick.getRawAxis(Axis.LEFT_BACK.id); }
+   *
+   * <p>/** Right slider on back of controller. * public double getRightBackAxis() { return
+   * joystick.getRawAxis(Axis.RIGHT_BACK.id); }
+   */
   private <E extends Enum<E>> Command log(E control) {
-return new LogCommand(logger, control.toString());
-}
+    return new LogCommand(logger, control.toString());
+  }
 
   public enum Axis {
     RIGHT_X(1),

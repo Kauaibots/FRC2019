@@ -1,12 +1,10 @@
 package frc.team2468.thirdcoastmulev2.control;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team2468.thirdcoastmulev2.command.LogCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /** This assumes the use of a Logitech F310 controller. */
 @SuppressWarnings("unused")
@@ -14,18 +12,15 @@ public class GameControls {
 
   private final Joystick joystick;
 
-private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public GameControls(int port) {
     joystick = new Joystick(port);
   }
 
   private <E extends Enum<E>> Command log(E control) {
-return new LogCommand(logger, control.toString());
-}
-
+    return new LogCommand(logger, control.toString());
+  }
 
   public enum Axis {
     LEFT_X(0),
@@ -81,5 +76,4 @@ return new LogCommand(logger, control.toString());
       this.id = id;
     }
   }
-
 }

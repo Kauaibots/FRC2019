@@ -6,7 +6,7 @@ import frc.team2468.thirdcoastmulev2.subsystem.DriveSubsystem;
 
 public final class ZeroGyroCommand extends InstantCommand {
 
-  private final static DriveSubsystem swerve = Robot.DRIVE;
+  private static final DriveSubsystem swerve = Robot.DRIVE;
 
   public ZeroGyroCommand() {
     requires(swerve);
