@@ -73,6 +73,7 @@ public final class DriveDistance extends Command {
     return (targetTick - Math.abs(currentTick));
   }
 
+  //Converts the raw power value (from PID) and angle into the format that allows angular driving
   public void driveCalculation() {
     if (driveAngle == 0) {
       yOut = 1.0;
@@ -134,6 +135,7 @@ public final class DriveDistance extends Command {
     }
   }
 
+  //A non-pid decelerator. Replace getPidOutput with this to change.
   public double getCurveOut() {
     double curve = 0;
 

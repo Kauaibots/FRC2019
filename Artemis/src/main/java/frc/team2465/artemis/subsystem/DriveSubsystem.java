@@ -210,17 +210,21 @@ public class DriveSubsystem extends PIDSubsystem {
   }
 
   public boolean rotationHeld() {
-    if (Robot.oi.getDriveStick().getRawButton(9)
-        | Robot.oi.getDriveStick().getRawButton(10)
-        | Robot.oi.getDriveStick().getRawButton(11)
-        | Robot.oi.getDriveStick().getRawButton(12)) {
+    if (Robot.oi.AutoRotate0.get()
+        | Robot.oi.AutoRotate90.get()
+        | Robot.oi.AutoRotateN90.get()
+        | Robot.oi.AutoRotate180.get()) {
       return true;
     } else return false;
   }
 
+  public double getCurrAngle(){
+    return swerve.getGyro().pidGet();
+  }
+
   @Override
   protected double returnPIDInput() {
-    if (pidOwner) {
+    if (pidOwner) { //pidOwner is true when autoRotate owns the PID
       return swerve.getGyro().pidGet();
     } else {
       return driveError;
@@ -243,7 +247,6 @@ public class DriveSubsystem extends PIDSubsystem {
   }
 
   public void enablePID(boolean b) {
-    // TODO Auto-generated method stub
     if (b) {
       getPIDController().enable();
     } else {
@@ -257,7 +260,7 @@ public class DriveSubsystem extends PIDSubsystem {
   }
 
   public void setPidRotate() {
-    getPIDController().setPID(rP, rI, rD, 0.0);
+    //getPIDController().setPID(rP, rI, rD, 0.0);
     getPIDController().setInputRange(-180, 180);
     getPIDController().setContinuous(true);
     getPIDController().setOutputRange(-1, 1);
@@ -270,8 +273,8 @@ public class DriveSubsystem extends PIDSubsystem {
     targetTick = Math.abs(targetTick);
     // getPIDController().setPID(dP, dI, dD);
     getPIDController().setPID(tuneP, tuneI, tuneD, tuneF);
-    getPIDController().setInputRange(-targetTick, targetTick);
-    getPIDController().setContinuous(true);
+    getPIDController().setInputRange(-targetTick*0.25, targetTick*1.25);
+    getPIDController().setContinuous(false);
     getPIDController().setOutputRange(-1, 1);
     getPIDController().setAbsoluteTolerance(tolerance_ticks);
     setSetpoint(0);

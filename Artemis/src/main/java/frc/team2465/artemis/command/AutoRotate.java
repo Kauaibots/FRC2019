@@ -14,6 +14,9 @@ public final class AutoRotate extends Command {
   int counter;
   boolean auton = true;
 
+
+  //When auton is true, the joystick x and y values are not passed in. When false, allows for movment of
+  //  robot while rotating and locking to an angle
   public AutoRotate(float rotationAngle, boolean auton) {
     target_angle = rotationAngle;
     this.auton = auton;
@@ -34,13 +37,14 @@ public final class AutoRotate extends Command {
 
   // Called repeatedly when this Command is scheduled to run
   protected void execute() {
-    // swerve.updatePID();
+     swerve.updatePID();
 
     SmartDashboard.putNumber("P", swerve.getPIDController().getP());
 
     SmartDashboard.putNumber("AutoRotate Error", swerve.getPIDController().getError());
     SmartDashboard.putNumber("AutoRotate Setpoint", swerve.getPIDController().getSetpoint());
     SmartDashboard.putBoolean("AutoRotate On Target", swerve.getPIDController().onTarget());
+    SmartDashboard.putNumber("Current Angle", swerve.getCurrAngle());
 
     if (auton) {
       swerve.drive(0.0, 0.0, swerve.getPidOutput());
@@ -54,8 +58,8 @@ public final class AutoRotate extends Command {
     if (isTimedOut() && !swerve.rotationHeld()) {
       return true;
     }
-    if (counter >= 4 && swerve.onTarget() && !swerve.rotationHeld()) {
-      return swerve.onTarget();
+    if (counter >= 6 && swerve.onTarget() && !swerve.rotationHeld()) {
+      return true;
     } else if (!swerve.onTarget()) {
       counter = 0;
     } else if (swerve.onTarget()) {
